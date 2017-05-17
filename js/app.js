@@ -4,6 +4,7 @@ $(document).foundation()
 const megaroster = {
     init(){
         this.max=0 //counter for student id
+        this.studentList = document.querySelector('#student-list')
         document
             .querySelector('#new-student')
             .addEventListener('submit', this.addStudent.bind(this)) //using the function, not the value returned from the func
@@ -17,13 +18,16 @@ const megaroster = {
             name: f.studentName.value, //it targets the form and value of student name for the user input. Could replace ev.target with "this"
         }
 
-        this.buildListItem(student) //even when inside an object, when called by a function "this" refers to the event not the object. adding bind will fix this
+        const listItem = this.buildListItem(student) //even when inside an object, when called by a function "this" refers to the event not the object. adding bind will fix this
+        this.studentList.appendChild(listItem)
         this.max++
     },
 
     buildListItem(student) {
-        console.log(student)
-
+        const li = document.createElement('li')
+        li.textContent = student.name
+        return li
+        
     },
 }
 megaroster.init()
