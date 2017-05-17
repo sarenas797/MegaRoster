@@ -25,6 +25,7 @@ const megaroster = {
         const listItem = this.buildListItem(student) //even when inside an object, when called by a function "this" refers to the event not the object. adding bind will fix this
         this.studentList.appendChild(listItem)
         this.max++
+        f.reset() //clears field or f.studentName.value = ""
     },
 
     buildListItem(student) {
