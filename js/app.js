@@ -34,6 +34,8 @@ const megaroster = {
     
     this.max ++
     f.reset()
+
+    this.save()
   },
 
   prependChild(parent, child) {
@@ -87,10 +89,10 @@ const megaroster = {
   promote(ev){
     const btn = ev.target
       if(btn.closest('.student').style.backgroundColor==='orange'){
-      btn.closest('.student').style.backgroundColor='white'
+        btn.closest('.student').style.backgroundColor='white'
     }
     else{
-    btn.closest('.student').style.backgroundColor='orange'
+      btn.closest('.student').style.backgroundColor='orange'
     }
   },
 
@@ -100,10 +102,15 @@ const megaroster = {
 
     // Remove it from the this.students array
     this.students.splice(megaroster.length, 1)
+    this.save()
   },
 
   removeClassName(el, className) {
     el.className = el.className.replace(className, '').trim()
-  }
+  },
+
+  save(){
+    localStorage.setItem('roster', JSON.stringify(this.students))
+  },
 }
 megaroster.init()
