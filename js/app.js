@@ -7,33 +7,44 @@ const megaroster = {
     this.studentList = document.querySelector('#student-list')
     this.max = 0
     this.setupEventListeners()
-    localStorage.setItem('list', document.querySelector('.student').parentNode.childNodes)
-    if(performance.navigation.type===1){
-      var item = localStorage.getItem('list')
-    }
+    this.load()
   },
 
   setupEventListeners() {
     document
       .querySelector('#new-student')
-      .addEventListener('submit', this.addStudent.bind(this))
+      .addEventListener('submit', this.addstudentviaform.bind(this))
+  },
+  
+  load(){
+    const rosterString = localStorage.getItem('roster')
+    const rosterArray= JSON.parse(rosterString)
+    if(rosterArray){
+      rosterArray.reverse().map(this.addStudent.bind(this))
+    }
+
   },
 
-  addStudent(ev) {
-    ev.preventDefault()
-    const f = ev.target
-    const student = {
+  addstudentviaform(ev){
+      ev.preventDefault()
+      const f = ev.target
+      const student = {
       id: this.max + 1,
       name: f.studentName.value,
     }
+    this.addStudent(student)
+    f.reset
+  },
 
+  addStudent(student) {
     this.students.unshift(student)
     
     const listItem = this.buildListItem(student)
     this.prependChild(this.studentList, listItem)
     
-    this.max ++
-    f.reset()
+    if(student.id>this.max){
+      this.max = student.id
+    }
 
     this.save()
   },
@@ -46,17 +57,29 @@ const megaroster = {
     const template = document.querySelector('.student.template')
     const li = template.cloneNode(true)
     li.querySelector('.student-name').textContent = student.name
+    li.setAttribute('title', student.name)
     li.dataset.id = student.id
     this.removeClassName(li, 'template')
 
     li
       .querySelector('button.remove')
       .addEventListener('click', this.removeStudent.bind(this))
-    li.querySelector('button.success').addEventListener('click', this.promote.bind(this))
+    li.querySelector('button.success').addEventListener('click', this.promote.bind(this, student))
     li.querySelector('button.secondary').addEventListener('click', this.moveUp.bind(this))
     li.querySelector('button.movedown').addEventListener('click', this.moveDown.bind(this))
+    li.querySelector('button.edit').addEventListener('click', this.edit.bind(this))
     return li
     
+
+  },
+
+  edit (ev){
+    alert("Double click on the name to edit")
+    $('span').bind('dblclick',
+    function(){
+        $(this).attr('contentEditable',true);
+    this.addstudentviaform(ev)
+    });
 
   },
 
@@ -86,7 +109,7 @@ const megaroster = {
     }
   },
 
-  promote(ev){
+  promote(student, ev){
     const btn = ev.target
       if(btn.closest('.student').style.backgroundColor==='orange'){
         btn.closest('.student').style.backgroundColor='white'
@@ -94,14 +117,21 @@ const megaroster = {
     else{
       btn.closest('.student').style.backgroundColor='orange'
     }
+    student.promoted = true;
   },
 
   removeStudent(ev) {
     const btn = ev.target
-    btn.closest('.student').remove()
+    const li =  btn.closest('.student')
+    for (let i=0; i < this.students.length; i++) {
+      let currentId = this.students[i].id.toString()
+      if (currentId === li.dataset.id) {
+        this.students.splice(i, 1)
+        break
+      }
+    }
 
-    // Remove it from the this.students array
-    this.students.splice(megaroster.length, 1)
+    li.remove()
     this.save()
   },
 

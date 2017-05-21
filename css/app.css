@@ -5,12 +5,33 @@
     font-family: sans-serif
 }
 
-.student-name{
-    padding-right: 150px;
+.student{
+    border: 1px solid #ddd;
+    padding: .75rem 1.25rem
 }
+
 .alert{
     font-family: sans-serif
 }
+
 .actions{
-    padding:15px;
+    float:right;
+    margin-bottom: 0;
+}
+
+.student + .student{
+    border-top: none;
+}
+.student.name{
+    float:left;
+    line-height: 38px;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+    width: calc(100%-110px)
+}
+.edit{
+    background-color: #551a8b
+}
+.promote{
+    color:#ddd
 }
