@@ -32,8 +32,8 @@ const megaroster = {
       id: this.max + 1,
       name: f.studentName.value,
     }
+    f.reset()
     this.addStudent(student)
-    f.reset
   },
 
   addStudent(student) {
@@ -45,7 +45,6 @@ const megaroster = {
     if(student.id>this.max){
       this.max = student.id
     }
-
     this.save()
   },
 
@@ -59,65 +58,103 @@ const megaroster = {
     li.querySelector('.student-name').textContent = student.name
     li.setAttribute('title', student.name)
     li.dataset.id = student.id
+    if (student.promoted) {
+      li.classList.add('promoted')
+    }
     this.removeClassName(li, 'template')
 
     li
       .querySelector('button.remove')
       .addEventListener('click', this.removeStudent.bind(this))
     li.querySelector('button.success').addEventListener('click', this.promote.bind(this, student))
-    li.querySelector('button.secondary').addEventListener('click', this.moveUp.bind(this))
-    li.querySelector('button.movedown').addEventListener('click', this.moveDown.bind(this))
-    li.querySelector('button.edit').addEventListener('click', this.edit.bind(this))
+    li.querySelector('button.secondary').addEventListener('click', this.moveUp.bind(this, student))
+    li.querySelector('button.movedown').addEventListener('click', this.moveDown.bind(this, student))
+    li.querySelector('button.edit').addEventListener('click', this.edit.bind(this, student))
+    li.querySelector('button.save').addEventListener('click', this.saveName.bind(this, student))
     return li
     
 
   },
+  saveName(student, ev){
+    const btn = ev.target
+    const index = this.students.findIndex((currentStudent, i) => {
+      return currentStudent.id === student.id})
+    this.students[index].name = btn.closest('.student').textContent.trim()
+    this.save()
+  },
 
-  edit (ev){
+  edit(student, ev){
     alert("Double click on the name to edit")
     $('span').bind('dblclick',
     function(){
         $(this).attr('contentEditable',true);
-    this.addstudentviaform(ev)
-    });
-
+    })
+    .blur(
+        function() {
+            $(this).attr('contentEditable', false);
+        }
+      ) 
   },
 
-  moveDown(ev){
+  moveDown(student, ev){
     const btn = ev.target
-    const swap=btn.closest('.student').nextSibling
     const orig=btn.closest('.student')
-    const parent = btn.closest('.student').parentNode
+    const swap=orig.nextSibling
+    const parent = swap.parentNode
+
+    const index = this.students.findIndex((currentStudent, i) => {
+      return currentStudent.id === student.id})
+
     if(parent.lastChild.previousSibling===swap){
       alert('This is the bottom of the list')
     }
+
     else{
       parent.insertBefore(swap,orig)
+      let a = this.students[index]
+      this.students[index] = this.students[index+1]
+      this.students[index+1] = a
+
+      this.save()
     }
   },
 
-  moveUp(ev){
+  moveUp(student, ev){
     const btn = ev.target
-    const swap=btn.closest('.student').previousSibling
     const orig=btn.closest('.student')
-    const parent = btn.closest('.student').parentNode
+    const swap=orig.previousSibling
+    const parent = swap.parentNode
+
+    const index = this.students.findIndex((currentStudent, i) => {
+      return currentStudent.id === student.id})
+
     if(swap===null){
       alert('This is the top of the list')
     }
+
     else{
       parent.insertBefore(orig,swap)
+      let a = this.students[index]
+      this.students[index] = this.students[index-1]
+      this.students[index-1] = a
+      this.save()
     }
   },
 
   promote(student, ev){
     const btn = ev.target
+    let li = btn.closest('.student')
       if(btn.closest('.student').style.backgroundColor==='orange'){
         btn.closest('.student').style.backgroundColor='white'
+        li.classList.remove('promoted')
+        student.promoted=false;
     }
     else{
       btn.closest('.student').style.backgroundColor='orange'
+      li.classList.add('promoted')
+      student.promoted = true;
     }
-    student.promoted = true;
+    this.save()
   },
 
   removeStudent(ev) {
