@@ -1,8 +1,12 @@
+
+@import url('https://fonts.googleapis.com/css?family=Abril+Fatface');
+
 .template{
     visibility: hidden;
 }
 h2{
-    font-family:'Georgia';
+    font-family: 'Abril Fatface', cursive;
+    text-transform: lowercase;
     text-align: center;
 }
 
