@@ -3,6 +3,7 @@
 }
 h2{
     font-family:'Georgia';
+    text-align: center;
 }
 
 .student{
@@ -34,4 +35,7 @@ h2{
 }
 .promoted{
     background-color:#ffa807
+}
+.save{
+    background-color: #800000
 }
