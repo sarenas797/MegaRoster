@@ -76,7 +76,7 @@ const megaroster = {
 
   },
   saveName(student, ev){
-    const btn = ev.target
+    const btn = ev.currentTarget
     const index = this.students.findIndex((currentStudent, i) => {
       return currentStudent.id === student.id})
     this.students[index].name = btn.closest('.student').textContent.trim()
